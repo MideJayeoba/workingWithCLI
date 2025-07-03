@@ -1,0 +1,15 @@
+C:\Users\USER\codes\workingWithCLI\vaultApp\obj\Debug\net9.0\vaultApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\USER\codes\workingWithCLI\vaultApp\obj\Debug\net9.0\vaultApp.AssemblyInfoInputs.cache
+C:\Users\USER\codes\workingWithCLI\vaultApp\obj\Debug\net9.0\vaultApp.AssemblyInfo.cs
+C:\Users\USER\codes\workingWithCLI\vaultApp\obj\Debug\net9.0\vaultApp.csproj.CoreCompileInputs.cache
+C:\Users\USER\codes\workingWithCLI\vaultApp\obj\Debug\net9.0\vaultApp.sourcelink.json
+C:\Users\USER\codes\workingWithCLI\vaultApp\bin\Debug\net9.0\vaultApp.exe
+C:\Users\USER\codes\workingWithCLI\vaultApp\bin\Debug\net9.0\vaultApp.deps.json
+C:\Users\USER\codes\workingWithCLI\vaultApp\bin\Debug\net9.0\vaultApp.runtimeconfig.json
+C:\Users\USER\codes\workingWithCLI\vaultApp\bin\Debug\net9.0\vaultApp.dll
+C:\Users\USER\codes\workingWithCLI\vaultApp\bin\Debug\net9.0\vaultApp.pdb
+C:\Users\USER\codes\workingWithCLI\vaultApp\obj\Debug\net9.0\vaultApp.dll
+C:\Users\USER\codes\workingWithCLI\vaultApp\obj\Debug\net9.0\refint\vaultApp.dll
+C:\Users\USER\codes\workingWithCLI\vaultApp\obj\Debug\net9.0\vaultApp.pdb
+C:\Users\USER\codes\workingWithCLI\vaultApp\obj\Debug\net9.0\vaultApp.genruntimeconfig.cache
+C:\Users\USER\codes\workingWithCLI\vaultApp\obj\Debug\net9.0\ref\vaultApp.dll
