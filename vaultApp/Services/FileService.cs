@@ -5,6 +5,11 @@ public static class FileService
 {
     public static string Upload(string filePath)
     {
+        if (Path.GetExtension(filePath) == ".exe")
+        {
+            throw new ArgumentException("Oops .exe files are allowed here please.");
+        }
+
         if (!Directory.Exists("Storage/uploads"))
         {
             Directory.CreateDirectory("Storage/uploads");
@@ -33,6 +38,10 @@ public static class FileService
             {
                 existingMeta = JsonSerializer.Deserialize<List<FileMeta>>(json) ?? new List<FileMeta>();
             }
+        }
+        if (existingMeta.Any(m => m.Name == fileName))
+        {
+            throw new InvalidOperationException($"File with the name '{fileName}' already exists in the Vault!.");
         }
         
         existingMeta.Add(meta);
