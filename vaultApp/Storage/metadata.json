@@ -1,19 +1,5 @@
 [
   {
-    "Id": "7fb59764-4",
-    "Name": "task.txt",
-    "Path": "Storage\\uploads\\task.txt",
-    "Size": 0,
-    "UploadTime": "2025-07-03T10:09:52.0866413+01:00"
-  },
-  {
-    "Id": "62da05f7-4",
-    "Name": "task.txt",
-    "Path": "Storage\\uploads\\task.txt",
-    "Size": 0,
-    "UploadTime": "2025-07-03T10:10:34.7947898+01:00"
-  },
-  {
     "Id": "48feb4ae-b",
     "Name": "Milestone 1 - CLI.pdf",
     "Path": "Storage\\uploads\\Milestone 1 - CLI.pdf",

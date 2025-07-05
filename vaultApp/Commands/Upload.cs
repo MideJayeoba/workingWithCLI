@@ -13,6 +13,11 @@ namespace vaultApp.Commands
             }
 
             var filePath = args[0];
+            if (Path.GetExtension(filePath) == ".exe")
+            {
+                Console.WriteLine("Oops .exe files are allowed here please.");
+                return;
+            }
             if (!File.Exists(filePath))
             {
                 Console.WriteLine($"File not found: {filePath}");
