@@ -66,8 +66,7 @@ public static class FileService
 
         return JsonSerializer.Deserialize<List<FileMeta>>(json) ?? new List<FileMeta>();
     }
-    
-    
+
     // Deletes a file from the vault by its ID
     public static bool Delete(string fileId)
     {
