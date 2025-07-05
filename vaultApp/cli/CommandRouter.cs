@@ -9,6 +9,7 @@ namespace vaultApp.cli
             if (args.Length == 0)
             {
                 Console.WriteLine("Please enter a command (e.g., upload <filepath>)");
+                return;
             }
 
             var command = args[0].ToLower();
@@ -17,6 +18,15 @@ namespace vaultApp.cli
             {
                 case "upload":
                     UploadCommand.Handle(args.Skip(1).ToArray());
+                    break;
+                case "list":
+                    ListCommand.Handle(args.Skip(1).ToArray());
+                    break;
+                case "read":
+                    ReadCommand.Handle(args.Skip(1).ToArray());
+                    break;
+                case "delete":
+                    DeleteCommand.Handle(args.Skip(1).ToArray());
                     break;
                 default:
                     Console.WriteLine($"Unknown command: {command}");

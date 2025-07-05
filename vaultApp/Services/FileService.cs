@@ -3,12 +3,9 @@ namespace vaultApp.Services;
 
 public static class FileService
 {
+    // Uploads a file to the vault and returns its ID
     public static string Upload(string filePath)
     {
-        if (Path.GetExtension(filePath) == ".exe")
-        {
-            throw new ArgumentException("Oops .exe files are allowed here please.");
-        }
 
         if (!Directory.Exists("Storage/uploads"))
         {
@@ -43,14 +40,62 @@ public static class FileService
         {
             throw new InvalidOperationException($"File with the name '{fileName}' already exists in the Vault!.");
         }
-        
+
         existingMeta.Add(meta);
         var newJson = JsonSerializer.Serialize(existingMeta, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(metaFilePath, newJson);
 
         return fileId;
     }
+
+    // Retrieves all files from the vault for listing or reading
+    public static List<FileMeta> GetAllFiles()
+    {
+        var metaFilePath = Path.Combine("Storage", "metadata.json");
+        if (!File.Exists(metaFilePath))
+        {
+            return new List<FileMeta>();
+        }
+
+        string json = File.ReadAllText(metaFilePath);
+        if (string.IsNullOrEmpty(json))
+        {
+            Console.WriteLine("No files found in the Vault.");
+            return new List<FileMeta>();
+        }
+
+        return JsonSerializer.Deserialize<List<FileMeta>>(json) ?? new List<FileMeta>();
+    }
+    
+    
+    // Deletes a file from the vault by its ID
+    public static bool Delete(string fileId)
+    {
+        string metadataFile = "Storage/metadata.json";
+
+        if (!File.Exists(metadataFile))
+            return false;
+
+        var json = File.ReadAllText(metadataFile);
+        var metadata = JsonSerializer.Deserialize<List<FileMeta>>(json) ?? new();
+
+        var match = metadata.FirstOrDefault(m => m.Id == fileId);
+        if (match is null)
+            return false;
+
+
+        if (File.Exists(match.Path))
+            File.Delete(match.Path);
+
+
+        metadata.Remove(match);
+        var updatedJson = JsonSerializer.Serialize(metadata, new JsonSerializerOptions { WriteIndented = true });
+        File.WriteAllText(metadataFile, updatedJson);
+
+        return true;
+    }
 }
+
 
 // Define the FileMeta class
 public class FileMeta
