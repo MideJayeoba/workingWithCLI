@@ -47,8 +47,11 @@ public static class FileService
 
         return fileId;
     }
+<<<<<<< HEAD
 
     // Retrieves all files from the vault for listing or reading
+=======
+>>>>>>> 685d007ffb6b30c33911ceabb1d0be355d85e9d6
     public static List<FileMeta> GetAllFiles()
     {
         var metaFilePath = Path.Combine("Storage", "metadata.json");
@@ -67,7 +70,10 @@ public static class FileService
         return JsonSerializer.Deserialize<List<FileMeta>>(json) ?? new List<FileMeta>();
     }
 
+<<<<<<< HEAD
     // Deletes a file from the vault by its ID
+=======
+>>>>>>> 685d007ffb6b30c33911ceabb1d0be355d85e9d6
     public static bool Delete(string fileId)
     {
         string metadataFile = "Storage/metadata.json";
@@ -82,19 +88,29 @@ public static class FileService
         if (match is null)
             return false;
 
+<<<<<<< HEAD
 
         if (File.Exists(match.Path))
             File.Delete(match.Path);
 
 
+=======
+        
+        if (File.Exists(match.Path))
+            File.Delete(match.Path);
+
+        
+>>>>>>> 685d007ffb6b30c33911ceabb1d0be355d85e9d6
         metadata.Remove(match);
         var updatedJson = JsonSerializer.Serialize(metadata, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(metadataFile, updatedJson);
 
         return true;
+<<<<<<< HEAD
     }
+=======
+>>>>>>> 685d007ffb6b30c33911ceabb1d0be355d85e9d6
 }
-
 
 // Define the FileMeta class
 public class FileMeta
