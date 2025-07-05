@@ -47,8 +47,6 @@ public static class FileService
 
         return fileId;
     }
-
-    // Retrieves all files from the vault for listing or reading
     public static List<FileMeta> GetAllFiles()
     {
         var metaFilePath = Path.Combine("Storage", "metadata.json");
@@ -66,9 +64,7 @@ public static class FileService
 
         return JsonSerializer.Deserialize<List<FileMeta>>(json) ?? new List<FileMeta>();
     }
-    
-    
-    // Deletes a file from the vault by its ID
+
     public static bool Delete(string fileId)
     {
         string metadataFile = "Storage/metadata.json";
@@ -83,17 +79,17 @@ public static class FileService
         if (match is null)
             return false;
 
-
+        
         if (File.Exists(match.Path))
             File.Delete(match.Path);
 
-
+        
         metadata.Remove(match);
         var updatedJson = JsonSerializer.Serialize(metadata, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(metadataFile, updatedJson);
 
         return true;
-    }
+}
 }
 
 
