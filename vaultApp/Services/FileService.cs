@@ -1,4 +1,3 @@
-using System.Text.Json;
 namespace vaultApp.Services;
 
 public static class FileService
@@ -6,118 +5,153 @@ public static class FileService
     // Uploads a file to the vault and returns its ID
     public static string Upload(string filePath)
     {
-
         if (!Directory.Exists("Storage/uploads"))
         {
             Directory.CreateDirectory("Storage/uploads");
         }
+
         var fileId = Guid.NewGuid().ToString().Substring(0, 10);
         var fileName = Path.GetFileName(filePath);
         var destinationPath = Path.Combine("Storage", "uploads", fileName);
-        File.Copy(filePath, destinationPath, true);
-        var fileInfo = new FileInfo(destinationPath);
-        var fileSize = fileInfo.Length; // in bytes;
-        var uploadTime = DateTime.Now;
-        var meta = new FileMeta
+
+        // Check if file already exists in database
+        try
         {
-            Id = fileId,
-            Name = fileName,
-            Path = destinationPath,
-            Size = fileSize,
-            UploadTime = uploadTime
-        };
-        var metaFilePath = Path.Combine("Storage", $"metadata.json");
-        List<FileMeta> existingMeta = new();
-        if (File.Exists(metaFilePath))
-        {
-            string json = File.ReadAllText(metaFilePath);
-            if (!string.IsNullOrEmpty(json))
+            using var connection = Database.Database.GetConnection();
+            connection.Open();
+
+            var checkCommand = connection.CreateCommand();
+            checkCommand.CommandText = "SELECT COUNT(*) FROM Files WHERE Name = @name";
+            checkCommand.Parameters.AddWithValue("@name", fileName);
+
+            var count = Convert.ToInt32(checkCommand.ExecuteScalar());
+            if (count > 0)
             {
-                existingMeta = JsonSerializer.Deserialize<List<FileMeta>>(json) ?? new List<FileMeta>();
+                throw new InvalidOperationException($"File with the name '{fileName}' already exists in the Vault!");
             }
+
+            // Copy file to storage
+            File.Copy(filePath, destinationPath, true);
+            var fileInfo = new FileInfo(destinationPath);
+            var fileSize = fileInfo.Length;
+            var uploadTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            // Insert file metadata into database
+            var insertCommand = connection.CreateCommand();
+            insertCommand.CommandText = @"
+                INSERT INTO Files (Id, Name, Path, Size, UploadTime)
+                VALUES (@id, @name, @path, @size, @uploadTime)";
+
+            insertCommand.Parameters.AddWithValue("@id", fileId);
+            insertCommand.Parameters.AddWithValue("@name", fileName);
+            insertCommand.Parameters.AddWithValue("@path", destinationPath);
+            insertCommand.Parameters.AddWithValue("@size", fileSize);
+            insertCommand.Parameters.AddWithValue("@uploadTime", uploadTime);
+
+            insertCommand.ExecuteNonQuery();
+
+            return fileId;
         }
-        if (existingMeta.Any(m => m.Name == fileName))
+        catch (Exception ex)
         {
-            throw new InvalidOperationException($"File with the name '{fileName}' already exists in the Vault!.");
+            // Clean up file if database operation fails
+            if (File.Exists(destinationPath))
+            {
+                File.Delete(destinationPath);
+            }
+            throw new InvalidOperationException($"Upload failed: {ex.Message}");
         }
-
-        existingMeta.Add(meta);
-        var newJson = JsonSerializer.Serialize(existingMeta, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(metaFilePath, newJson);
-
-        return fileId;
     }
-<<<<<<< HEAD
-
-    // Retrieves all files from the vault for listing or reading
-=======
->>>>>>> 685d007ffb6b30c33911ceabb1d0be355d85e9d6
     public static List<FileMeta> GetAllFiles()
     {
-        var metaFilePath = Path.Combine("Storage", "metadata.json");
-        if (!File.Exists(metaFilePath))
+        var files = new List<FileMeta>();
+
+        try
         {
-            return new List<FileMeta>();
+            using var connection = Database.Database.GetConnection();
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM Files ORDER BY UploadTime DESC";
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                files.Add(new FileMeta
+                {
+                    Id = reader["Id"].ToString(),
+                    Name = reader["Name"].ToString(),
+                    Path = reader["Path"].ToString(),
+                    Size = Convert.ToInt64(reader["Size"]),
+                    UploadTime = DateTime.Parse(reader["UploadTime"].ToString() ?? string.Empty)
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving files: {ex.Message}");
         }
 
-        string json = File.ReadAllText(metaFilePath);
-        if (string.IsNullOrEmpty(json))
-        {
-            Console.WriteLine("No files found in the Vault.");
-            return new List<FileMeta>();
-        }
-
-        return JsonSerializer.Deserialize<List<FileMeta>>(json) ?? new List<FileMeta>();
+        return files;
     }
 
-<<<<<<< HEAD
-    // Deletes a file from the vault by its ID
-=======
->>>>>>> 685d007ffb6b30c33911ceabb1d0be355d85e9d6
     public static bool Delete(string fileId)
     {
-        string metadataFile = "Storage/metadata.json";
+        try
+        {
+            using var connection = Database.Database.GetConnection();
+            connection.Open();
 
-        if (!File.Exists(metadataFile))
+            // Get file info before deleting
+            var selectCommand = connection.CreateCommand();
+            selectCommand.CommandText = "SELECT Name, Path FROM Files WHERE Id = @id";
+            selectCommand.Parameters.AddWithValue("@id", fileId);
+
+            using var reader = selectCommand.ExecuteReader();
+            if (!reader.Read())
+            {
+                Console.WriteLine($"File with ID '{fileId}' not found.");
+                return false;
+            }
+
+            var fileName = reader["Name"].ToString();
+            var filePath = reader["Path"].ToString();
+            reader.Close();
+
+            // Delete from database
+            var deleteCommand = connection.CreateCommand();
+            deleteCommand.CommandText = "DELETE FROM Files WHERE Id = @id";
+            deleteCommand.Parameters.AddWithValue("@id", fileId);
+
+            var rowsAffected = deleteCommand.ExecuteNonQuery();
+            if (rowsAffected > 0)
+            {
+                // Delete physical file
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+                Console.WriteLine($"File '{fileName}' deleted successfully.");
+                return true;
+            }
+
             return false;
-
-        var json = File.ReadAllText(metadataFile);
-        var metadata = JsonSerializer.Deserialize<List<FileMeta>>(json) ?? new();
-
-        var match = metadata.FirstOrDefault(m => m.Id == fileId);
-        if (match is null)
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting file: {ex.Message}");
             return false;
-
-<<<<<<< HEAD
-
-        if (File.Exists(match.Path))
-            File.Delete(match.Path);
-
-
-=======
-        
-        if (File.Exists(match.Path))
-            File.Delete(match.Path);
-
-        
->>>>>>> 685d007ffb6b30c33911ceabb1d0be355d85e9d6
-        metadata.Remove(match);
-        var updatedJson = JsonSerializer.Serialize(metadata, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(metadataFile, updatedJson);
-
-        return true;
-<<<<<<< HEAD
+        }
     }
-=======
->>>>>>> 685d007ffb6b30c33911ceabb1d0be355d85e9d6
-}
 
-// Define the FileMeta class
-public class FileMeta
-{
-    public string? Id { get; set; }
-    public string? Name { get; set; }
-    public string? Path { get; set; }
-    public long Size { get; set; }
-    public DateTime UploadTime { get; set; }
+
+    // Define the FileMeta class
+    public class FileMeta
+    {
+        public string? Id { get; set; }
+        public string? Name { get; set; }
+        public string? Path { get; set; }
+        public long Size { get; set; }
+        public DateTime UploadTime { get; set; }
+    }
 }

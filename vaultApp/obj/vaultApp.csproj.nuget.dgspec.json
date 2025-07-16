@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\USER\\codes\\workingWithCLI\\vaultApp\\vaultApp.csproj": {}
+    "C:\\Users\\USER\\codes\\workingWithCLI\\vaultapp\\vaultApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\USER\\codes\\workingWithCLI\\vaultApp\\vaultApp.csproj": {
+    "C:\\Users\\USER\\codes\\workingWithCLI\\vaultapp\\vaultApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USER\\codes\\workingWithCLI\\vaultApp\\vaultApp.csproj",
+        "projectUniqueName": "C:\\Users\\USER\\codes\\workingWithCLI\\vaultapp\\vaultApp.csproj",
         "projectName": "vaultApp",
-        "projectPath": "C:\\Users\\USER\\codes\\workingWithCLI\\vaultApp\\vaultApp.csproj",
+        "projectPath": "C:\\Users\\USER\\codes\\workingWithCLI\\vaultapp\\vaultApp.csproj",
         "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USER\\codes\\workingWithCLI\\vaultApp\\obj\\",
+        "outputPath": "C:\\Users\\USER\\codes\\workingWithCLI\\vaultapp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -43,6 +43,20 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
+          "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
+            "Microsoft.Data.Sqlite": {
+              "target": "Package",
+              "version": "[9.0.7, )"
+            },
+            "StackExchange.Redis": {
+              "target": "Package",
+              "version": "[2.8.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

@@ -1,4 +1,5 @@
 using vaultApp.Commands;
+using vaultApp.Database;
 
 namespace vaultApp.cli
 {
@@ -6,31 +7,54 @@ namespace vaultApp.cli
     {
         public static void Route(string[] args)
         {
-            if (args.Length == 0)
+            var command = args[0].ToLower();
+            if (command == "register")
             {
-                Console.WriteLine("Please enter a command (e.g., upload <filepath>)");
+                RegisterCommand.Handle(args.Skip(1).ToArray());
+                return;
+            }
+            if (command == "login")
+            {
+                Logincommand.Handle(args.Skip(1).ToArray());
+                return;
+            }
+            if (command == "dbview")
+            {
+                DbViewCommand.Handle(args.Skip(1).ToArray());
                 return;
             }
 
-            var command = args[0].ToLower();
+            if (args.Length == 0)
+                {
+                    Console.WriteLine("Please enter a command (e.g., upload <filepath>)");
+                    return;
+                }
 
-            switch (command)
+            if (!Redis.IsLoggedIn())
             {
-                case "upload":
-                    UploadCommand.Handle(args.Skip(1).ToArray());
-                    break;
-                case "list":
-                    ListCommand.Handle(args.Skip(1).ToArray());
-                    break;
-                case "read":
-                    ReadCommand.Handle(args.Skip(1).ToArray());
-                    break;
-                case "delete":
-                    DeleteCommand.Handle(args.Skip(1).ToArray());
-                    break;
-                default:
-                    Console.WriteLine($"Unknown command: {command}");
-                    break;
+                Console.WriteLine("You must be logged in to perform this action.");
+                return;
+            }
+            else
+            {
+                switch (command)
+                {
+                    case "upload":
+                        UploadCommand.Handle(args.Skip(1).ToArray());
+                        break;
+                    case "list":
+                        ListCommand.Handle(args.Skip(1).ToArray());
+                        break;
+                    case "read":
+                        ReadCommand.Handle(args.Skip(1).ToArray());
+                        break;
+                    case "delete":
+                        DeleteCommand.Handle(args.Skip(1).ToArray());
+                        break;
+                    default:
+                        Console.WriteLine($"Unknown command: {command}");
+                        break;
+                }
             }
         }
     }
