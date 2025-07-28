@@ -31,7 +31,7 @@ public static class Database
                 Username TEXT UNIQUE,
                 Email TEXT UNIQUE NOT NULL,
                 HashedPassword TEXT NOT NULL,
-                CreatedAt TEXT NOT NULL
+                CreatedAt TEXT NOT NULL              
             )";
         createUsersTableCommand.ExecuteNonQuery();
 
@@ -39,11 +39,17 @@ public static class Database
         var createFilesTableCommand = connection.CreateCommand();
         createFilesTableCommand.CommandText = @"
             CREATE TABLE IF NOT EXISTS Files (
+                UserId TEXT NOT NULL,
                 Id TEXT PRIMARY KEY,
                 Name TEXT NOT NULL,
                 Path TEXT NOT NULL,
+                Type TEXT NOT NULL DEFAULT 'file',
+                Visibility TEXT NOT NULL DEFAULT 'private',
                 Size INTEGER NOT NULL,
-                UploadTime TEXT NOT NULL
+                UploadTime TEXT NOT NULL,
+                ParentId TEXT,
+                FOREIGN KEY (UserId) REFERENCES Users (Id),
+                FOREIGN KEY (ParentId) REFERENCES Files (Id)
             )";
         createFilesTableCommand.ExecuteNonQuery();
     }

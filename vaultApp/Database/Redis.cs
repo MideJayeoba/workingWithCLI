@@ -13,7 +13,6 @@ namespace vaultApp.Database
             {
                 _connection = ConnectionMultiplexer.Connect("localhost:6379");
                 _database = _connection.GetDatabase();
-                Console.WriteLine("✅ Redis connected");
             }
             catch (Exception)
             {
@@ -34,6 +33,21 @@ namespace vaultApp.Database
             catch (Exception ex)
             {
                 Console.WriteLine($"❌ Session creation failed: {ex.Message}");
+            }
+        }
+
+        // To store job queue in JSON format
+        public static void CreateJobQueue(string jobData)
+        {
+            if (_database is null) return;
+
+            try
+            {
+                _database.ListRightPush("new_job_queue", jobData);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Job queue creation failed: {ex.Message}");
             }
         }
 
@@ -61,6 +75,23 @@ namespace vaultApp.Database
             {
                 var userId = _database.StringGet("current_user");
                 return userId.HasValue ? userId.ToString() : null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public static string? GetJobQueue()
+        {
+            if (_database is null)
+                
+                return null;
+
+            try
+            {
+                var job = _database.StringGet("job_queue");
+                return job.HasValue ? job.ToString() : null;
             }
             catch
             {

@@ -12,16 +12,11 @@ namespace vaultApp.Commands
                 return;
             }
             
-            var metaFilePath = Path.Combine("Storage", "metadata.json");
-            if (!File.Exists(metaFilePath))
-            {
-                Console.WriteLine("No files found in the Vault.");
-                return;
-            }
             var fileMetas = FileService.GetAllFiles();
             if (fileMetas == null || !fileMetas.Any())
             {
-                Console.WriteLine("No files found in the Vault.");
+                Console.WriteLine("User has not uploaded any file yet.");
+                Console.WriteLine("You can run the upload {filepath} to upload files.");
                 return;
             }
             

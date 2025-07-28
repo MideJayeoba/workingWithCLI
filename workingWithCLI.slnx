@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="vaultApp/vaultApp.csproj" />
+  <Project Path="ThumbnailWorker/ThumbnailWorker.csproj" />
+</Solution>

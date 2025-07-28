@@ -85,6 +85,13 @@ namespace vaultApp.Services
             else
                 return false; // password does not match
         }
+
+        public static void Logout()
+        {
+
+            Redis.EndSession();
+            return;
+        }
     }
 }
     

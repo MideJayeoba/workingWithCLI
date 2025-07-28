@@ -15,6 +15,12 @@ namespace vaultApp.cli
             }
             if (command == "login")
             {
+                while (Redis.IsLoggedIn())
+                {
+                    Console.WriteLine("A user is logged in already.");
+                    Console.WriteLine("You can logout to log in another user");
+                    return;
+                }
                 Logincommand.Handle(args.Skip(1).ToArray());
                 return;
             }
@@ -23,12 +29,17 @@ namespace vaultApp.cli
                 DbViewCommand.Handle(args.Skip(1).ToArray());
                 return;
             }
+            // if (command == "listpublic")
+            // {
+            //     ListPublicCommand.Handle(args.Skip(1).ToArray());
+            //     return;
+            // }
 
             if (args.Length == 0)
-                {
-                    Console.WriteLine("Please enter a command (e.g., upload <filepath>)");
-                    return;
-                }
+            {
+                Console.WriteLine("Please enter a command (e.g., upload <filepath>)");
+                return;
+            }
 
             if (!Redis.IsLoggedIn())
             {
@@ -45,11 +56,26 @@ namespace vaultApp.cli
                     case "list":
                         ListCommand.Handle(args.Skip(1).ToArray());
                         break;
+                    case "ls":
+                        LsCommand.Handle(args.Skip(1).ToArray());
+                        break;
                     case "read":
                         ReadCommand.Handle(args.Skip(1).ToArray());
                         break;
                     case "delete":
                         DeleteCommand.Handle(args.Skip(1).ToArray());
+                        break;
+                    case "logout":
+                        LogoutCommand.Handle();
+                        break;
+                    case "mkdir":
+                        MkDirCommand.Handle(args.Skip(1).ToArray());
+                        break;
+                    case "publish":
+                        PublishCommand.Handle(args.Skip(1).ToArray());
+                        break;
+                    case "unpublish":
+                        UnpublishCommand.Handle(args.Skip(1).ToArray());
                         break;
                     default:
                         Console.WriteLine($"Unknown command: {command}");

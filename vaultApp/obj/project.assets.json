@@ -567,11 +567,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\USER\\codes\\workingWithCLI\\vaultapp\\vaultApp.csproj",
+      "projectUniqueName": "C:\\Users\\USER\\codes\\workingWithCLI\\vaultApp\\vaultApp.csproj",
       "projectName": "vaultApp",
-      "projectPath": "C:\\Users\\USER\\codes\\workingWithCLI\\vaultapp\\vaultApp.csproj",
+      "projectPath": "C:\\Users\\USER\\codes\\workingWithCLI\\vaultApp\\vaultApp.csproj",
       "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\USER\\codes\\workingWithCLI\\vaultapp\\obj\\",
+      "outputPath": "C:\\Users\\USER\\codes\\workingWithCLI\\vaultApp\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config"
