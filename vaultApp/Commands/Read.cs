@@ -1,4 +1,5 @@
 // you input your UUID and it give the information about it from the metadata file
+using vaultApp.Repositories;
 using vaultApp.Services;
 
 public static class ReadCommand
@@ -12,7 +13,7 @@ public static class ReadCommand
         }
 
         var fileId = args[0];
-        var fileMetas = FileService.GetAllFiles();
+        var fileMetas = FileService.GetAllFilesbyUSerId();
         var fileMeta = fileMetas.FirstOrDefault(f => f.Id == fileId);
 
         if (fileMeta == null)
