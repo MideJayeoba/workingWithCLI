@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "j/KslrFsfA0=",
+  "dgSpecHash": "L8JGi77ZXII=",
   "success": true,
-  "projectFilePath": "C:\\Users\\USER\\codes\\workingWithCLI\\vaultapp\\vaultApp.csproj",
+  "projectFilePath": "C:\\Users\\USER\\codes\\workingWithCLI\\vaultApp\\vaultApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\USER\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\microsoft.data.sqlite\\9.0.7\\microsoft.data.sqlite.9.0.7.nupkg.sha512",

@@ -1,5 +1,7 @@
 using vaultApp.Commands;
 // using Microsoft.Data.Sqlite;
+using vaultApp.Repositories;
+using vaultApp.Models;
 using vaultApp.Database;
 
 
@@ -30,60 +32,48 @@ namespace vaultApp.Services
             //     Password = password, 
             //     CreatedAt = created_at
             // };
-
-            var connection = Database.Database.GetConnection();
-            connection.Open();
-            var checkCmd = connection.CreateCommand();
-            checkCmd.CommandText = "SELECT COUNT(*) FROM Users WHERE Email = $email";
-            checkCmd.Parameters.AddWithValue("$email", email);
-
-            var result = checkCmd.ExecuteScalar();
-            long count = (result != null && result != DBNull.Value) ? Convert.ToInt64(result) : 0;
-
-            if (count > 0)
+            try
             {
-                return false; // user already exists
+                var user = new UserEntity(UserID, username, email, hashedPassword, created_at);
+                // Check if user already exists
+                if (UserRepository.UserExists(email))
+                {
+                    return false; // Indicating registration failed
+                }
+                if (UserRepository.Register(user))
+                {
+                    return true; // Indicating registration was successful
+                }
             }
-            var insertCmd = connection.CreateCommand();
-            insertCmd.CommandText = @"
-                INSERT INTO Users (Id, Username, Email, HashedPassword, CreatedAt)
-                VALUES ($id, $username, $email, $password, $createdAt)";
-            insertCmd.Parameters.AddWithValue("$id", UserID);
-            insertCmd.Parameters.AddWithValue("$username", username);
-            insertCmd.Parameters.AddWithValue("$email", email);
-            insertCmd.Parameters.AddWithValue("$password", hashedPassword);
-            insertCmd.Parameters.AddWithValue("$createdAt", created_at);
-
-            insertCmd.ExecuteNonQuery();
-
-            return true;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during registration: {ex.Message}");
+                return false; // Indicating registration failed
+            }
+            return false; 
         }
 
         public static bool Login(string email, string password)
         {
-
-            var connection = Database.Database.GetConnection();
-            connection.Open();
-            var checkCmd = connection.CreateCommand();
-            checkCmd.CommandText = "SELECT HashedPassword, Id FROM Users WHERE Email = $email";
-            checkCmd.Parameters.AddWithValue("$email", email);
-
-            var reader = checkCmd.ExecuteReader();
-            if (!reader.Read())
+            var userExist = UserRepository.UserExists(email);
+            
+            
+            var userId = UserRepository.Login(email, password);
+            if (userExist && userId == null)
             {
-                return false; // user not found
+                Console.WriteLine("User exists but password is incorrect.");
+                return false; // Indicating login failed
             }
-            var result = reader["HashedPassword"].ToString();
-            var userId = reader["Id"]?.ToString();
-
-            if (BCrypt.Net.BCrypt.Verify(password, result) && !string.IsNullOrEmpty(userId))
+            if (userId != null)
             {
-                // Create session
                 Redis.CreateSession(userId);
-                return true;
+                return true; // Indicating login was successful
             }
             else
-                return false; // password does not match
+            {
+                Console.WriteLine("Login failed. Please check your email and password.");
+                return false; // Indicating login failed
+            }
         }
 
         public static void Logout()
@@ -94,4 +84,3 @@ namespace vaultApp.Services
         }
     }
 }
-    

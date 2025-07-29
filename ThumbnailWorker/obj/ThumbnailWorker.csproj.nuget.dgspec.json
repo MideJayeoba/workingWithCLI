@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\USER\\codes\\workingWithCLI\\thumbnailworker\\ThumbnailWorker.csproj": {}
+    "C:\\Users\\USER\\codes\\workingWithCLI\\ThumbnailWorker\\ThumbnailWorker.csproj": {}
   },
   "projects": {
-    "C:\\Users\\USER\\codes\\workingWithCLI\\thumbnailworker\\ThumbnailWorker.csproj": {
+    "C:\\Users\\USER\\codes\\workingWithCLI\\ThumbnailWorker\\ThumbnailWorker.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USER\\codes\\workingWithCLI\\thumbnailworker\\ThumbnailWorker.csproj",
+        "projectUniqueName": "C:\\Users\\USER\\codes\\workingWithCLI\\ThumbnailWorker\\ThumbnailWorker.csproj",
         "projectName": "ThumbnailWorker",
-        "projectPath": "C:\\Users\\USER\\codes\\workingWithCLI\\thumbnailworker\\ThumbnailWorker.csproj",
+        "projectPath": "C:\\Users\\USER\\codes\\workingWithCLI\\ThumbnailWorker\\ThumbnailWorker.csproj",
         "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USER\\codes\\workingWithCLI\\thumbnailworker\\obj\\",
+        "outputPath": "C:\\Users\\USER\\codes\\workingWithCLI\\ThumbnailWorker\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config"

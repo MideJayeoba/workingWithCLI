@@ -18,7 +18,7 @@ public class FileEntity
     }
 
     // Main constructor
-    public FileEntity(string userId, string name, string path, long size = 0, string? parentId = null) : this()
+    public FileEntity(string Id, string userId, string name, string path, long size = 0, string? parentId = null) : this()
     {
         Id = Id ?? throw new ArgumentNullException(nameof(userId));
         UserId = userId ?? throw new ArgumentNullException(nameof(userId));
@@ -27,15 +27,15 @@ public class FileEntity
         Size = size;
         ParentId = parentId;
     }
-    
-    public static FileEntity CreateFolder(string userId, string name, string path, long size = 0, string? parentId = null)
+
+    public static FileEntity CreateFolder(string Id, string userId, string name, string path, long size = 0, string? parentId = null)
     {
-        var folder = new FileEntity(userId, name, path, size, parentId)
+        var folder = new FileEntity(Id, userId, name, path, size, parentId)
         {
             Type = "folder"
         };
         return folder;
     }
-    
+
 }
 

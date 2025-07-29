@@ -12,7 +12,7 @@ namespace vaultApp.Commands
                 return;
             }
             
-            var fileMetas = FileService.GetAllFiles();
+            var fileMetas = FileService.GetAllFilesbyUSerId();
             if (fileMetas == null || !fileMetas.Any())
             {
                 Console.WriteLine("User has not uploaded any file yet.");

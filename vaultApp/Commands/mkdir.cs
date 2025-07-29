@@ -17,7 +17,7 @@ public static class MkDirCommand
         var Create = FileService.Mkdir(args);
 
         if (Create)
-        {
+        { 
             Console.WriteLine($"✅ Directory '{directoryName}' created successfully.");
             return;
         }
