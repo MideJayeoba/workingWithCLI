@@ -15,24 +15,40 @@ public static class FileService
 
 
     // Uploads a file to the vault and returns its ID
-    public static string Upload(string filePath)
+    public static string Upload(string[] file)
     {
+        var filePath = file[0] ?? throw new ArgumentNullException(nameof(file));
+        string? parentId = file.Length > 1 ? file[1] : null;
+
+        FileEntity? fileinfo = null;
+        string? folderPath = null;
+        if (parentId != null)
+        {
+            fileinfo = FileRepo.GetById(parentId, UserId);
+            folderPath = fileinfo?.Path;
+        }
         if (!Directory.Exists("Storage/uploads"))
+
         {
             Directory.CreateDirectory("Storage/uploads");
         }
 
         var fileId = Guid.NewGuid().ToString().Substring(0, 10);
         var fileName = Path.GetFileName(filePath);
-        var destinationPath = Path.Combine("Storage", "uploads", fileName);
+        string destinationPath;
+        if (!string.IsNullOrEmpty(folderPath) && Directory.Exists(folderPath))
+        {
+            // folderPath already contains the full path (Storage\uploads\Mide)
+            destinationPath = Path.Combine(folderPath, fileName); // ✅ Correct!
+        }
+        else
+        {
+            destinationPath = Path.Combine("Storage", "uploads", fileName);
+        }
 
-
-        
-
-        // Check if file already exists in database
         try
         {
-            if (FileRepo.Exists(fileName, UserId))
+            if (FileRepo.Exists(fileName, UserId, parentId))
             {
                 throw new InvalidOperationException($"File with the name '{fileName}' already exists in the Vault!");
             }
@@ -44,6 +60,7 @@ public static class FileService
             var uploadTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
             // To check if the file is an image
+            string jobJson = "";
             var fileType = Path.GetExtension(fileName).ToLower();
             if (fileType == ".jpg" || fileType == ".jpeg" || fileType == ".png" || fileType == ".gif")
             {
@@ -53,24 +70,83 @@ public static class FileService
                 var job = new
                 {
                     file_id = fileId,
-                    path = destinationPath
+                    path = destinationPath,
+                    image_name = Path.GetFileNameWithoutExtension(fileName)
                 };
-                string jobJson = JsonSerializer.Serialize(job);
-
-                // Here you would typically enqueue the job to a background worker or similar
-                Redis.CreateJobQueue(jobJson);
+                jobJson = JsonSerializer.Serialize(job);
             }
             else
             {
                 // Otherwise, default to "file"
                 fileType = "file";
             }
-            var fileEntity = new FileEntity(fileId, UserId, fileName, destinationPath, fileSize)
+            var folderEntity = new FileEntity
             {
-                UploadTime = DateTime.Parse(uploadTime),
-                Type = fileType
+                Id = fileId,
+                UserId = UserId,
+                Name = fileName,
+                Path = destinationPath,
+                Size = fileSize,
+                Type = fileType,
+                Visibility = "private",
+                ParentId = parentId,
+                UploadTime = DateTime.Now
             };
-            FileRepo.Create(fileEntity);
+
+            // Add to metadata.json file - handle multiple files properly
+            var metadataPath = Path.Combine("storage", "metadata.json");
+            List<FileEntity> metadataList;
+
+            if (File.Exists(metadataPath))
+            {
+                try
+                {
+                    var existingJson = File.ReadAllText(metadataPath);
+
+                    // Check if file is empty or whitespace
+                    if (string.IsNullOrWhiteSpace(existingJson))
+                    {
+                        metadataList = new List<FileEntity>();
+                    }
+                    else
+                    {
+                        // Try to deserialize as array first
+                        try
+                        {
+                            metadataList = JsonSerializer.Deserialize<List<FileEntity>>(existingJson) ?? new List<FileEntity>();
+                        }
+                        catch
+                        {
+                            // If it fails, try as single object and convert to array
+                            var singleItem = JsonSerializer.Deserialize<FileEntity>(existingJson);
+                            metadataList = singleItem != null ? new List<FileEntity> { singleItem } : new List<FileEntity>();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"⚠️ Warning: Could not read metadata.json: {ex.Message}");
+                    metadataList = new List<FileEntity>();
+                }
+            }
+            else
+            {
+                metadataList = new List<FileEntity>();
+            }
+
+            // Add new file to the list
+            metadataList.Add(folderEntity);
+
+            // Save back as array
+            var jsonData = JsonSerializer.Serialize(metadataList, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(metadataPath, jsonData);
+
+            FileRepo.Create(folderEntity);
+
+            if (!string.IsNullOrEmpty(jobJson))
+            {
+                Redis.CreateJobQueue(jobJson);
+            }
 
             // Return the fileId after successful upload
             return fileId;
@@ -110,14 +186,60 @@ public static class FileService
                 File.Delete(fileInfo.Path);
             }
 
-            // Delete thumbnail if it exists
-            var thumbnailPath = Path.Combine("Storage", "thumbnails", $"{fileId}.jpg");
+            // Delete the object in the metadata.json file using the id given
+            var metadataPath = Path.Combine("storage", "metadata.json");
+            if (File.Exists(metadataPath))
+            {
+                try
+                {
+                    var jsonContent = File.ReadAllText(metadataPath);
+
+                    // Try to deserialize as array first
+                    try
+                    {
+                        var metadataArray = JsonSerializer.Deserialize<List<FileEntity>>(jsonContent);
+                        if (metadataArray != null)
+                        {
+                            var itemToRemove = metadataArray.FirstOrDefault(m => m.Id == fileId);
+                            if (itemToRemove != null)
+                            {
+                                metadataArray.Remove(itemToRemove);
+
+                                if (metadataArray.Count > 0)
+                                {
+                                    // Write back the updated array
+                                    var updatedJson = JsonSerializer.Serialize(metadataArray, new JsonSerializerOptions { WriteIndented = true });
+                                    File.WriteAllText(metadataPath, updatedJson);
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // If array deserialization fails, try single object
+                        var singleMetadata = JsonSerializer.Deserialize<FileEntity>(jsonContent);
+                        if (singleMetadata != null && singleMetadata.Id == fileId)
+                        {
+                            // This is the only file, delete the metadata file
+                            File.Delete(metadataPath);
+                            Console.WriteLine("📄 Metadata file removed");
+                        }
+                    }
+                }
+                catch (JsonException ex)
+                {
+                    Console.WriteLine($"⚠️ Warning: Could not process metadata.json: {ex.Message}");
+                    // Continue anyway since database deletion succeeded
+                }
+            }
+
+            // Delete thumbnail if it exists (match ThumbnailWorker output format)
+            var thumbnailPath = Path.Combine("Storage", "thumbnails", $"{Path.GetFileNameWithoutExtension(fileInfo.Name)}.jpg");
             if (File.Exists(thumbnailPath))
             {
                 File.Delete(thumbnailPath);
+                Console.WriteLine("🖼️ Thumbnail deleted");
             }
-
-            Console.WriteLine($"File '{fileInfo.Name}' deleted successfully.");
             return true;
         }
         catch (Exception ex)
@@ -159,26 +281,90 @@ public static class FileService
                 // No parent - create in root uploads directory
                 dirPath = Path.Combine("Storage", "uploads", dirName);
             }
-
-            // Check if directory already exists physically
             if (Directory.Exists(dirPath))
             {
                 Console.WriteLine($"Directory '{dirName}' already exists.");
                 return false;
             }
 
-            // Create physical directory
-            Directory.CreateDirectory(dirPath);
+
 
             // Create folder entity using your FileEntity constructor/factory
-            var folderEntity = FileEntity.CreateFolder(folderId, UserId, dirName, dirPath, 0, parentId);
+            var folderEntity = new FileEntity
+            {
+                Id = folderId,
+                UserId = UserId,
+                Name = dirName,
+                Path = dirPath,
+                Size = 0,
+                Type = "folder",
+                Visibility = "private",
+                ParentId = parentId,
+                UploadTime = DateTime.Now
+            };
 
             // Save to database using repository
             var createdId = FileRepo.Create(folderEntity);
+
+            // Add to metadata.json file - same pattern as Upload method
+            var metadataPath = Path.Combine("storage", "metadata.json");
+            List<FileEntity> metadataList;
+
+            if (File.Exists(metadataPath))
+            {
+                try
+                {
+                    var existingJson = File.ReadAllText(metadataPath);
+
+                    // Check if file is empty or whitespace
+                    if (string.IsNullOrWhiteSpace(existingJson))
+                    {
+                        metadataList = new List<FileEntity>();
+                    }
+                    else
+                    {
+                        // Try to deserialize as array first
+                        try
+                        {
+                            metadataList = JsonSerializer.Deserialize<List<FileEntity>>(existingJson) ?? new List<FileEntity>();
+                        }
+                        catch
+                        {
+                            // If it fails, try as single object and convert to array
+                            var singleItem = JsonSerializer.Deserialize<FileEntity>(existingJson);
+                            metadataList = singleItem != null ? new List<FileEntity> { singleItem } : new List<FileEntity>();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"⚠️ Warning: Could not read metadata.json: {ex.Message}");
+                    metadataList = new List<FileEntity>();
+                }
+            }
+            else
+            {
+                metadataList = new List<FileEntity>();
+            }
+
+            // Add new folder to the list
+            metadataList.Add(folderEntity);
+
+            // Save back as array
+            var jsonData = JsonSerializer.Serialize(metadataList, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(metadataPath, jsonData);
+
+            // Create physical directory
+            Directory.CreateDirectory(dirPath);
             return true;
         }
         catch (Exception ex)
         {
+            // clean up if directory creation fails
+            if (Directory.Exists(dirName))
+            {
+                Directory.Delete(dirName, true);
+            }
             Console.WriteLine($"Error creating directory: {ex.Message}");
             return false;
         }
@@ -210,7 +396,7 @@ public static class FileService
             if (!changeVisibility)
             {
                 return false;
-            } 
+            }
             else
             {
                 var action = visibility == "public" ? "published" : "unpublished";

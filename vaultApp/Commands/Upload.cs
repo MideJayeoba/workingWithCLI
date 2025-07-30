@@ -26,7 +26,7 @@ namespace vaultApp.Commands
             }
             else
             {
-                string fileId = FileService.Upload(filePath);
+                string fileId = FileService.Upload(args);
                 Console.WriteLine($"File uploaded successfully! ID: {fileId}");
             }
         }

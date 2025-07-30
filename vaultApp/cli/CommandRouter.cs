@@ -7,6 +7,12 @@ namespace vaultApp.cli
     {
         public static void Route(string[] args)
         {
+            if (args.Length == 0)
+            {
+                Console.WriteLine("Please provide a command. Use 'help' to see available commands.");
+                return;
+            }
+
             var command = args[0].ToLower();
             if (command == "register")
             {
@@ -43,7 +49,7 @@ namespace vaultApp.cli
 
             if (!Redis.IsLoggedIn())
             {
-                Console.WriteLine("You must be logged in to perform this action.");
+                Console.WriteLine("No user is logged in.");
                 return;
             }
             else
@@ -76,6 +82,9 @@ namespace vaultApp.cli
                         break;
                     case "unpublish":
                         UnpublishCommand.Handle(args.Skip(1).ToArray());
+                        break;
+                    case "clearqueue":
+                        Redis.ClearJobQueue();
                         break;
                     default:
                         Console.WriteLine($"Unknown command: {command}");

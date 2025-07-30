@@ -10,7 +10,7 @@ public class FileEntity
     public string Visibility { get; set; } = "private";
     public long Size { get; set; }
     public DateTime UploadTime { get; set; }
-    public string? ParentId { get; set; } // For folders, this is the ID of the parent folder
+    public string? ParentId { get; set; } = null; // For folders, this is the ID of the parent folder
 
     public FileEntity()
     {
@@ -28,9 +28,9 @@ public class FileEntity
         ParentId = parentId;
     }
 
-    public static FileEntity CreateFolder(string Id, string userId, string name, string path, long size = 0, string? parentId = null)
+    public static FileEntity CreateFolder(string Id, string userId, string name, string path, string? parentId = null)
     {
-        var folder = new FileEntity(Id, userId, name, path, size, parentId)
+        var folder = new FileEntity(Id, userId, name, path, 0, parentId)
         {
             Type = "folder"
         };

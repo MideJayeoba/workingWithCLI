@@ -23,7 +23,6 @@ public static class MkDirCommand
         }
         else
         {
-            Console.WriteLine($"❌ Failed! Directory '{directoryName}' already exists.");
             return;
         }
 

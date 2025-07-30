@@ -27,7 +27,7 @@ namespace vaultApp.Database
 
             try
             {
-                _database.StringSet("current_user", userId, TimeSpan.FromHours(1));
+                _database.StringSet("current_user", userId, TimeSpan.FromHours(12));
                 Console.WriteLine($"✅ Session created for user: {userId}");
             }
             catch (Exception ex)
@@ -96,6 +96,22 @@ namespace vaultApp.Database
             catch
             {
                 return null;
+            }
+        }
+
+        // Clear the job queue
+        public static void ClearJobQueue()
+        {
+            if (_database is null) return;
+
+            try
+            {
+                _database.KeyDelete("new_job_queue");
+                Console.WriteLine("✅ Job queue cleared");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Job queue clear failed: {ex.Message}");
             }
         }
 

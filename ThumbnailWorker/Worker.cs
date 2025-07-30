@@ -1,5 +1,6 @@
 using StackExchange.Redis;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
@@ -8,7 +9,7 @@ namespace ThumbnailWorker
 {
     public static class Worker
     {
-        public static void ProcessQueue()
+        public static async Task ProcessQueue()
         {
             var connection = ConnectionMultiplexer.Connect("localhost:6379");
             var database = connection.GetDatabase();
@@ -21,7 +22,7 @@ namespace ThumbnailWorker
 
                 if (!jobData.HasValue)
                 {
-                    Task.Delay(1000);
+                    await Task.Delay(1000);  // Properly await the delay
                     continue;
                 }
 
@@ -33,7 +34,9 @@ namespace ThumbnailWorker
                     continue;
                 }
                 string fileId = job.FileId;
-                var path = Path.Combine("..", "vaultapp", job.Path);
+                // job.Path contains relative path like "Storage\uploads\Mide\meent.jpg" 
+                // Need to build absolute path from ThumbnailWorker directory
+                var path = Path.Combine("..", "vaultApp", job.Path);
 
                 // Create output path to vaultApp's storage/thumbnails folder
                 string vaultAppStoragePath = Path.Combine("..", "vaultApp", "Storage", "thumbnails");
@@ -45,7 +48,7 @@ namespace ThumbnailWorker
                 }
 
                 // Create the full output path with thumbnail filename
-                var outputPath = Path.Combine(vaultAppStoragePath, fileId);
+                var outputPath = Path.Combine(vaultAppStoragePath, $"{job.ImageName}.jpg");
 
                 using var image = Image.Load(path);
                 image.Mutate(x => x.Resize(100, 100));
@@ -56,7 +59,13 @@ namespace ThumbnailWorker
 
     public class Job
     {
-        required public string FileId { get; set; } 
-        required public string Path { get; set; }
+        [JsonPropertyName("file_id")]
+        public required string FileId { get; set; }
+
+        [JsonPropertyName("path")]
+        public required string Path { get; set; }
+
+        [JsonPropertyName("image_name")]
+        public required string ImageName { get; set; }
     }
 }

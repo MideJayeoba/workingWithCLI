@@ -53,8 +53,6 @@ namespace vaultApp.Services
         public static bool Login(string email, string password)
         {
             var userExist = UserRepository.UserExists(email);
-            
-            
             var userId = UserRepository.Login(email, password);
             if (userExist && userId == null)
             {

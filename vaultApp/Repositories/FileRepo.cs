@@ -30,7 +30,6 @@ namespace vaultApp.Repositories
                 command.Parameters.AddWithValue("@parentId", file.ParentId ?? (object)DBNull.Value);
 
                 command.ExecuteNonQuery();
-                Console.WriteLine($"✅ File {file.Name} saved to database");
                 if (file.Id == null)
                 {
                     throw new InvalidOperationException("File Id cannot be null.");
@@ -45,19 +44,26 @@ namespace vaultApp.Repositories
         }
 
         // Method to check if file already exists
-        public static bool Exists(string fileName, string userId)
+        public static bool Exists(string fileName, string userId, string? parentId = null)
         {
+            if (string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(userId))
+            {
+                return false;
+            }
+
+            // Check if file exists in the specified parent directory
             try
             {
                 using var connection = Database.Database.GetConnection();
-                connection.OpenAsync();
+                connection.Open();
 
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT COUNT(*) FROM Files WHERE Name = @name AND UserId = @userId";
+                command.CommandText = "SELECT COUNT(*) FROM Files WHERE Name = @name AND UserId = @userId AND ((@parentId IS NULL AND ParentId IS NULL) OR ParentId = @parentId)";
                 command.Parameters.AddWithValue("@name", fileName);
                 command.Parameters.AddWithValue("@userId", userId);
+                command.Parameters.AddWithValue("@parentId", (object?)parentId ?? DBNull.Value);
 
-                var count = Convert.ToInt32(command.ExecuteScalarAsync());
+                var count = Convert.ToInt32(command.ExecuteScalar());
                 return count > 0;
             }
             catch (Exception ex)
@@ -78,7 +84,7 @@ namespace vaultApp.Repositories
             try
             {
                 using var connection = Database.Database.GetConnection();
-                connection.OpenAsync();
+                connection.Open();
 
                 var command = connection.CreateCommand();
                 command.CommandText = "SELECT * FROM Files WHERE Id = @id AND UserId = @userId";
@@ -250,8 +256,7 @@ namespace vaultApp.Repositories
                 return new List<FileEntity>();
             }
         }
-        
+
     }
 }
 
-            
