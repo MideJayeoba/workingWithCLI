@@ -66,7 +66,6 @@ namespace vaultApp.Services
             }
             else
             {
-                Console.WriteLine("Login failed. Please check your email and password.");
                 return false; // Indicating login failed
             }
         }

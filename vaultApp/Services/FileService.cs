@@ -384,10 +384,21 @@ public static class FileService
     {
         try
         {
-            var fileExists = FileRepo.Exists(fileId, UserId);
+
             var fileinfo = FileRepo.GetById(fileId, UserId);
-            // Update visibility
-            if (!fileExists || fileinfo == null)
+            if (fileinfo == null)
+            {
+                return false;
+            }
+            if (string.IsNullOrEmpty(fileinfo.Name))
+            {
+                Console.WriteLine($"File name is null or empty for file ID '{fileId}'.");
+                return false;
+            }
+            var fileExists = FileRepo.Exists(fileinfo.Name, UserId);
+
+            // Update visibility and update it also in the metadata.json file
+            if (!fileExists)
             {
                 Console.WriteLine($"File with ID '{fileId}' does not exist.");
                 return false;
@@ -401,6 +412,31 @@ public static class FileService
             {
                 var action = visibility == "public" ? "published" : "unpublished";
                 Console.WriteLine($"{fileinfo.Type.ToUpper() ?? "ITEM"} '{fileinfo.Name}' has been {action}.");
+                // Update metadata.json
+                var metadataPath = Path.Combine("storage", "metadata.json");
+                if (File.Exists(metadataPath))
+                {
+                    try
+                    {
+                        var jsonContent = File.ReadAllText(metadataPath);
+                        var metadataArray = JsonSerializer.Deserialize<List<FileEntity>>(jsonContent) ?? new List<FileEntity>();
+
+                        // Find the file entity to update
+                        var itemToUpdate = metadataArray.FirstOrDefault(m => m.Id == fileId);
+                        if (itemToUpdate != null)
+                        {
+                            itemToUpdate.Visibility = visibility;
+
+                            // Write back the updated array
+                            var updatedJson = JsonSerializer.Serialize(metadataArray, new JsonSerializerOptions { WriteIndented = true });
+                            File.WriteAllText(metadataPath, updatedJson);
+                        }
+                    }
+                    catch (JsonException ex)
+                    {
+                        Console.WriteLine($"⚠️ Warning: Could not process metadata.json: {ex.Message}");
+                    }
+                }
                 return true;
             }
         }
@@ -413,7 +449,6 @@ public static class FileService
 
     public static List<FileEntity> GetPublicFiles()
     {
-
         try
         {
             var publicFiles = FileRepo.GetPublicFiles();
@@ -426,16 +461,18 @@ public static class FileService
         return [];
     }
 
-    // Define the FileMeta class
-    public class FileMeta
+    // Get directory contents by parent ID
+    public static List<FileEntity> GetDirectoryContents(string? parentId)
     {
-        public string? Id { get; set; }
-        public string? Name { get; set; }
-        public string? Path { get; set; }
-        public string Type { get; set; } = "file";
-        public string Visibility { get; set; } = "private";
-        public long Size { get; set; }
-        public DateTime UploadTime { get; set; }
-        public string? ParentId { get; set; }
+        try
+        {
+            var items = FileRepo.GetByParentId(parentId, UserId);
+            return items;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error listing directory contents: {ex.Message}");
+            return [];
+        }
     }
 }

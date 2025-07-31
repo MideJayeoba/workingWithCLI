@@ -9,5 +9,38 @@
     "Size": 2536654,
     "UploadTime": "2025-07-30T17:23:24.8333427+01:00",
     "ParentId": null
+  },
+  {
+    "Id": "cdace3f4-6",
+    "UserId": "a560c9a1-0",
+    "Name": "meent.jpg",
+    "Path": "Storage\\uploads\\meent.jpg",
+    "Type": "image",
+    "Visibility": "private",
+    "Size": 2205430,
+    "UploadTime": "2025-07-30T18:32:38.8683775+01:00",
+    "ParentId": null
+  },
+  {
+    "Id": "9ca7a2c5-5",
+    "UserId": "a560c9a1-0",
+    "Name": "Mide",
+    "Path": "Storage\\uploads\\Mide",
+    "Type": "folder",
+    "Visibility": "private",
+    "Size": 0,
+    "UploadTime": "2025-07-30T18:33:47.8761115+01:00",
+    "ParentId": null
+  },
+  {
+    "Id": "80234a36-b",
+    "UserId": "a560c9a1-0",
+    "Name": "CSC417pl10ch2.pdf",
+    "Path": "Storage\\uploads\\Mide\\CSC417pl10ch2.pdf",
+    "Type": "file",
+    "Visibility": "private",
+    "Size": 776206,
+    "UploadTime": "2025-07-30T18:40:30.0732133+01:00",
+    "ParentId": "9ca7a2c5-5"
   }
 ]
