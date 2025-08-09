@@ -8,7 +8,7 @@
     ".NETCoreApp,Version=v9.0": {
       "ThumbnailWorker/1.0.0": {
         "dependencies": {
-          "SixLabors.ImageSharp": "3.1.10",
+          "SixLabors.ImageSharp": "3.1.11",
           "StackExchange.Redis": "2.8.58"
         },
         "runtime": {
@@ -45,11 +45,11 @@
           }
         }
       },
-      "SixLabors.ImageSharp/3.1.10": {
+      "SixLabors.ImageSharp/3.1.11": {
         "runtime": {
           "lib/net6.0/SixLabors.ImageSharp.dll": {
             "assemblyVersion": "3.0.0.0",
-            "fileVersion": "3.1.10.0"
+            "fileVersion": "3.1.11.0"
           }
         }
       },
@@ -95,12 +95,12 @@
       "path": "pipelines.sockets.unofficial/2.2.8",
       "hashPath": "pipelines.sockets.unofficial.2.2.8.nupkg.sha512"
     },
-    "SixLabors.ImageSharp/3.1.10": {
+    "SixLabors.ImageSharp/3.1.11": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-R1HEPcqx3v+kvlOTPouP0g/Nzzud9pHtjlgGbFax3Ivaz8kkaGfS2EPfyDGpmfoTUQ3nQ5wxdhYyYa9fwYA9cw==",
-      "path": "sixlabors.imagesharp/3.1.10",
-      "hashPath": "sixlabors.imagesharp.3.1.10.nupkg.sha512"
+      "sha512": "sha512-JfPLyigLthuE50yi6tMt7Amrenr/fA31t2CvJyhy/kQmfulIBAqo5T/YFUSRHtuYPXRSaUHygFeh6Qd933EoSw==",
+      "path": "sixlabors.imagesharp/3.1.11",
+      "hashPath": "sixlabors.imagesharp.3.1.11.nupkg.sha512"
     },
     "StackExchange.Redis/2.8.58": {
       "type": "package",

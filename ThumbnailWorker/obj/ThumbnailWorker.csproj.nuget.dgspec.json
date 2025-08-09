@@ -1,25 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\USER\\codes\\workingWithCLI\\thumbnailworker\\ThumbnailWorker.csproj": {}
+    "C:\\Users\\USER\\codes\\workingWithCLI\\ThumbnailWorker\\ThumbnailWorker.csproj": {}
   },
   "projects": {
-    "C:\\Users\\USER\\codes\\workingWithCLI\\thumbnailworker\\ThumbnailWorker.csproj": {
+    "C:\\Users\\USER\\codes\\workingWithCLI\\ThumbnailWorker\\ThumbnailWorker.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USER\\codes\\workingWithCLI\\thumbnailworker\\ThumbnailWorker.csproj",
+        "projectUniqueName": "C:\\Users\\USER\\codes\\workingWithCLI\\ThumbnailWorker\\ThumbnailWorker.csproj",
         "projectName": "ThumbnailWorker",
-        "projectPath": "C:\\Users\\USER\\codes\\workingWithCLI\\thumbnailworker\\ThumbnailWorker.csproj",
+        "projectPath": "C:\\Users\\USER\\codes\\workingWithCLI\\ThumbnailWorker\\ThumbnailWorker.csproj",
         "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USER\\codes\\workingWithCLI\\thumbnailworker\\obj\\",
+        "outputPath": "C:\\Users\\USER\\codes\\workingWithCLI\\ThumbnailWorker\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -46,7 +52,7 @@
           "dependencies": {
             "SixLabors.ImageSharp": {
               "target": "Package",
-              "version": "[3.1.10, )"
+              "version": "[3.1.11, )"
             },
             "StackExchange.Redis": {
               "target": "Package",
@@ -69,7 +75,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

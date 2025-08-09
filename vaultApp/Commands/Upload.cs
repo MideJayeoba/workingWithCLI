@@ -14,6 +14,7 @@ namespace vaultApp.Commands
             }
 
             var filePath = args[0];
+            string? parentId = args.Length > 1 ? args[1] : null;
             if (Path.GetExtension(filePath) == ".exe")
             {
                 Console.WriteLine("Oops .exe files are allowed here please.");
@@ -26,7 +27,7 @@ namespace vaultApp.Commands
             }
             else
             {
-                string fileId = FileService.Upload(args);
+                string fileId = FileService.Upload(filePath, parentId);
                 Console.WriteLine($"File uploaded successfully! ID: {fileId}");
             }
         }

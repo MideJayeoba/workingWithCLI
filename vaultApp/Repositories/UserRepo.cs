@@ -1,3 +1,4 @@
+using vaultApp.Database;
 using vaultApp.Models;
 
 namespace vaultApp.Repositories;
@@ -82,5 +83,34 @@ public class UserRepository
             Console.WriteLine($"Error during login: {ex.Message}");
         }
         return null; // Return null if login fails
+    }
+
+    public static UserEntity? GetById(string userId)
+    {
+        try
+        {
+            var connection = Database.Database.GetConnection();
+            connection.Open();
+            var cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT * FROM Users WHERE Id = $id";
+            cmd.Parameters.AddWithValue("$id", userId);
+
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                return new UserEntity(
+                    reader["Id"].ToString()!,
+                    reader["Username"].ToString()!,
+                    reader["Email"].ToString()!,
+                    reader["HashedPassword"].ToString()!,
+                    DateTime.Parse(reader["CreatedAt"].ToString()!)
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving user: {ex.Message}");
+        }
+        return null; // Return null if user not found
     }
 }

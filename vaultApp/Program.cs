@@ -8,7 +8,9 @@ class Program
         // Initialize Redis connection
         Redis.Initialise();
 
+        // Initialize database on startup
         Database.Initialize();
+
         CommandRouter.Route(args);
     }
 }

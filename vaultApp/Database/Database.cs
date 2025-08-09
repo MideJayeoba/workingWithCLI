@@ -1,11 +1,15 @@
 using Microsoft.Data.Sqlite;
-
+using System.IO;
 
 namespace vaultApp.Database;
 
 public static class Database
 {
-    private const string ConnectionString = "Data Source=Database/vault.db";
+    // Use shared storage path
+    private static readonly string DatabasePath = Path.GetFullPath(Path.Combine(
+        AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "SharedStorage", "vault.db"));
+
+    private static readonly string ConnectionString = $"Data Source={DatabasePath}";
 
     public static SqliteConnection GetConnection()
     {
@@ -14,10 +18,11 @@ public static class Database
 
     public static void Initialize()
     {
-        // Create Database directory if it doesn't exist
-        if (!Directory.Exists("Database"))
+        // Ensure SharedStorage directory exists
+        var sharedStorageDir = Path.GetDirectoryName(DatabasePath);
+        if (!Directory.Exists(sharedStorageDir))
         {
-            Directory.CreateDirectory("Database");
+            Directory.CreateDirectory(sharedStorageDir!);
         }
 
         using var connection = new SqliteConnection(ConnectionString);

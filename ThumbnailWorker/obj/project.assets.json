@@ -53,7 +53,7 @@
           }
         }
       },
-      "SixLabors.ImageSharp/3.1.10": {
+      "SixLabors.ImageSharp/3.1.11": {
         "type": "package",
         "compile": {
           "lib/net6.0/SixLabors.ImageSharp.dll": {
@@ -230,10 +230,10 @@
         "pipelines.sockets.unofficial.nuspec"
       ]
     },
-    "SixLabors.ImageSharp/3.1.10": {
-      "sha512": "R1HEPcqx3v+kvlOTPouP0g/Nzzud9pHtjlgGbFax3Ivaz8kkaGfS2EPfyDGpmfoTUQ3nQ5wxdhYyYa9fwYA9cw==",
+    "SixLabors.ImageSharp/3.1.11": {
+      "sha512": "JfPLyigLthuE50yi6tMt7Amrenr/fA31t2CvJyhy/kQmfulIBAqo5T/YFUSRHtuYPXRSaUHygFeh6Qd933EoSw==",
       "type": "package",
-      "path": "sixlabors.imagesharp/3.1.10",
+      "path": "sixlabors.imagesharp/3.1.11",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -242,7 +242,7 @@
         "lib/net6.0/SixLabors.ImageSharp.dll",
         "lib/net6.0/SixLabors.ImageSharp.xml",
         "sixlabors.imagesharp.128.png",
-        "sixlabors.imagesharp.3.1.10.nupkg.sha512",
+        "sixlabors.imagesharp.3.1.11.nupkg.sha512",
         "sixlabors.imagesharp.nuspec"
       ]
     },
@@ -299,12 +299,13 @@
   },
   "projectFileDependencyGroups": {
     "net9.0": [
-      "SixLabors.ImageSharp >= 3.1.10",
+      "SixLabors.ImageSharp >= 3.1.11",
       "StackExchange.Redis >= 2.8.58"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\USER\\.nuget\\packages\\": {}
+    "C:\\Users\\USER\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
@@ -315,13 +316,19 @@
       "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\USER\\codes\\workingWithCLI\\ThumbnailWorker\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -348,7 +355,7 @@
         "dependencies": {
           "SixLabors.ImageSharp": {
             "target": "Package",
-            "version": "[3.1.10, )"
+            "version": "[3.1.11, )"
           },
           "StackExchange.Redis": {
             "target": "Package",
@@ -371,7 +378,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

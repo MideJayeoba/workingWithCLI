@@ -1,0 +1,4 @@
+[*.cs]
+
+# CA1869: Cache and reuse 'JsonSerializerOptions' instances
+dotnet_diagnostic.CA1869.severity = suggestion

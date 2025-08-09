@@ -1,6 +1,5 @@
 using StackExchange.Redis;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
@@ -9,12 +8,24 @@ namespace ThumbnailWorker
 {
     public static class Worker
     {
-        public static async Task ProcessQueue()
+        // Shared storage paths
+        private static readonly string SharedStorageBase = Path.GetFullPath(Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "SharedStorage"));
+        private static readonly string ThumbnailsDirectory = Path.Combine(SharedStorageBase, "thumbnails");
+
+        public static void ProcessQueue()
         {
+            Console.WriteLine("Connecting to Redis...");
             var connection = ConnectionMultiplexer.Connect("localhost:6379");
             var database = connection.GetDatabase();
 
-            if (database is null) return;
+            if (database is null)
+            {
+                Console.WriteLine("❌ ThumbnailWorker: Failed to connect to Redis database");
+                return;
+            }
+
+            Console.WriteLine("Connected to Redis. Waiting for jobs...");
 
             while (true)
             {
@@ -22,50 +33,53 @@ namespace ThumbnailWorker
 
                 if (!jobData.HasValue)
                 {
-                    await Task.Delay(1000);  // Properly await the delay
+                    Thread.Sleep(1000); // Use Thread.Sleep for synchronous operation
                     continue;
                 }
+                
+                Console.WriteLine("***         ***");
+                Console.WriteLine($"Processing... ");
 
                 //Deserialize the jobData
                 var job = JsonSerializer.Deserialize<Job>(jobData.ToString());
                 if (job == null)
                 {
-                    // Skip this iteration if deserialization failed
+                    Console.WriteLine("❌ ThumbnailWorker: Failed to deserialize job data");
                     continue;
                 }
+
                 string fileId = job.FileId;
-                // job.Path contains relative path like "Storage\uploads\Mide\meent.jpg" 
-                // Need to build absolute path from ThumbnailWorker directory
-                var path = Path.Combine("..", "vaultApp", job.Path);
+                var path = job.Path; // Use absolute path from job
 
-                // Create output path to vaultApp's storage/thumbnails folder
-                string vaultAppStoragePath = Path.Combine("..", "vaultApp", "Storage", "thumbnails");
-
-                // Create thumbnails directory if it doesn't exist
-                if (!Directory.Exists(vaultAppStoragePath))
+                // Create shared thumbnails directory if it doesn't exist
+                if (!Directory.Exists(ThumbnailsDirectory))
                 {
-                    Directory.CreateDirectory(vaultAppStoragePath);
+                    Directory.CreateDirectory(ThumbnailsDirectory);
                 }
 
                 // Create the full output path with thumbnail filename
-                var outputPath = Path.Combine(vaultAppStoragePath, $"{job.ImageName}.jpg");
+                var outputPath = Path.Combine(ThumbnailsDirectory, $"{job.ImageName}.jpg");
 
-                using var image = Image.Load(path);
-                image.Mutate(x => x.Resize(100, 100));
-                image.SaveAsJpeg(outputPath);
+                try
+                {
+                    Console.WriteLine($"Creating thumbnail... ");
+                    using var image = Image.Load(path);
+                    image.Mutate(x => x.Resize(100, 100));
+                    image.SaveAsJpeg(outputPath);
+                    Console.WriteLine($"Done");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"❌ ThumbnailWorker: Error processing {job.ImageName}: {ex.Message}");
+                }
             }
         }
     }
 
     public class Job
     {
-        [JsonPropertyName("file_id")]
         public required string FileId { get; set; }
-
-        [JsonPropertyName("path")]
         public required string Path { get; set; }
-
-        [JsonPropertyName("image_name")]
         public required string ImageName { get; set; }
     }
 }

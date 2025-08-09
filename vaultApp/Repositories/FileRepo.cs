@@ -213,7 +213,6 @@ namespace vaultApp.Repositories
 
                 var rowsAffected = command.ExecuteNonQuery();
                 return rowsAffected > 0;
-
             }
             catch (Exception ex)
             {
@@ -254,66 +253,6 @@ namespace vaultApp.Repositories
             catch (Exception ex)
             {
                 Console.WriteLine($"Error retrieving public files: {ex.Message}");
-                return new List<FileEntity>();
-            }
-        }
-
-        // Get directory contents by parent ID
-        public static List<FileEntity> GetByParentId(string? parentId, string userId)
-        {
-            try
-            {
-                using var connection = Database.Database.GetConnection();
-                connection.Open();
-
-                var command = connection.CreateCommand();
-
-                if (parentId == null)
-                {
-                    // List root directory contents (where ParentId is NULL)
-                    command.CommandText = @"
-                        SELECT Id, Name, Path, Type, Size, UploadTime, ParentId, Visibility, UserId 
-                        FROM Files 
-                        WHERE UserId = @userId AND ParentId IS NULL 
-                        ORDER BY Type DESC, Name ASC";
-                }
-                else
-                {
-                    // List contents of specific folder
-                    command.CommandText = @"
-                        SELECT Id, Name, Path, Type, Size, UploadTime, ParentId, Visibility, UserId 
-                        FROM Files 
-                        WHERE UserId = @userId AND ParentId = @parentId 
-                        ORDER BY Type DESC, Name ASC";
-                    command.Parameters.AddWithValue("@parentId", parentId);
-                }
-
-                command.Parameters.AddWithValue("@userId", userId);
-
-                var items = new List<FileEntity>();
-                using var reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    items.Add(new FileEntity
-                    {
-                        Id = reader["Id"].ToString()!,
-                        UserId = reader["UserId"].ToString()!,
-                        Name = reader["Name"].ToString()!,
-                        Path = reader["Path"].ToString()!,
-                        Type = reader["Type"].ToString()!,
-                        Size = reader["Size"] == DBNull.Value ? 0 : Convert.ToInt64(reader["Size"]),
-                        UploadTime = DateTime.Parse(reader["UploadTime"].ToString()!),
-                        ParentId = reader["ParentId"]?.ToString(),
-                        Visibility = reader["Visibility"].ToString()!
-                    });
-                }
-
-                return items;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"❌ Error retrieving directory contents: {ex.Message}");
                 return new List<FileEntity>();
             }
         }

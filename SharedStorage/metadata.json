@@ -1,0 +1,35 @@
+[
+  {
+    "Id": "69c88492ed",
+    "UserId": "e5d1f01b-b",
+    "Name": "IMG_20250729_163659.png",
+    "Path": "C:\\Users\\USER\\codes\\workingWithCLI\\SharedStorage\\uploads\\IMG_20250729_163659.png",
+    "Type": "image",
+    "Visibility": "private",
+    "Size": 12784336,
+    "UploadTime": "2025-08-05T15:20:44.8092078+01:00",
+    "ParentId": null
+  },
+  {
+    "Id": "dcf7ef790a",
+    "UserId": "e5d1f01b-b",
+    "Name": "Milestone 4 - RESTful API.pdf",
+    "Path": "C:\\Users\\USER\\codes\\workingWithCLI\\SharedStorage\\uploads\\Milestone 4 - RESTful API.pdf",
+    "Type": "file",
+    "Visibility": "private",
+    "Size": 141750,
+    "UploadTime": "2025-08-05T15:28:34.1851507+01:00",
+    "ParentId": null
+  },
+  {
+    "Id": "57a989e82e",
+    "UserId": "5792c922-8",
+    "Name": "AKINWONMI AYOOLUWA CV.docx",
+    "Path": "C:\\Users\\USER\\codes\\workingWithCLI\\SharedStorage\\uploads\\AKINWONMI AYOOLUWA CV.docx",
+    "Type": "file",
+    "Visibility": "private",
+    "Size": 27520,
+    "UploadTime": "2025-08-08T16:28:12.9877024+01:00",
+    "ParentId": null
+  }
+]

@@ -1,4 +1,6 @@
 using vaultApp.Services;
+using vaultApp.Database;
+using vaultApp.Repositories;
 
 namespace vaultApp.Commands
 {
@@ -15,7 +17,9 @@ namespace vaultApp.Commands
             }
 
             // Get files and folders in the specified directory using FileService
-            var items = FileService.GetDirectoryContents(parentId);
+            var items = FileService.GetAllFilesbyUSerId()
+                .Where(f => f.ParentId == parentId)
+                .ToList();
 
             if (items == null || !items.Any())
             {
