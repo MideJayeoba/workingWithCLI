@@ -51,6 +51,28 @@ public class UserRepository
         }
     }
 
+    public static bool UserExistsByUsername(string username)
+    {
+        try
+        {
+            var connection = Database.Database.GetConnection();
+            connection.Open();
+            var checkCmd = connection.CreateCommand();
+            checkCmd.CommandText = "SELECT COUNT(*) FROM Users WHERE Username = $username";
+            checkCmd.Parameters.AddWithValue("$username", username);
+
+            var result = checkCmd.ExecuteScalar();
+            long count = (result != null && result != DBNull.Value) ? Convert.ToInt64(result) : 0;
+
+            return count > 0; // returns true if user exists
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error checking user existence: {ex.Message}");
+            return false;
+        }
+    }
+
     public static string? Login(string email, string password)
     {
         try

@@ -257,6 +257,25 @@ namespace webapi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, error = ex.Message });
             }
         }
+
+        [HttpGet("list")]
+        public ActionResult<List<FileInfo>> ListFiles()
+        {
+            try
+            {
+                var loggedInUser = Redis.GetCurrentUserId();
+                if (loggedInUser == null)
+                {
+                    return Unauthorized("No user in session, Try to log in.");
+                }
+                var files = FileRepo.GetAllByUserId(loggedInUser);
+                return Ok(files);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, error = ex.Message });
+            }
+        }
     }
 }
 

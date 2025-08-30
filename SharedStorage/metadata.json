@@ -31,5 +31,38 @@
     "Size": 27520,
     "UploadTime": "2025-08-08T16:28:12.9877024+01:00",
     "ParentId": null
+  },
+  {
+    "Id": "b6290381b0",
+    "UserId": "1d35cd77-7",
+    "Name": "jccf 28th gen.jpg",
+    "Path": "C:\\Users\\USER\\codes\\workingWithCLI\\SharedStorage\\uploads\\jccf 28th gen.jpg",
+    "Type": "image",
+    "Visibility": "private",
+    "Size": 75844,
+    "UploadTime": "2025-08-27T15:07:47.7786418+01:00",
+    "ParentId": null
+  },
+  {
+    "Id": "44232842cd",
+    "UserId": "1d35cd77-7",
+    "Name": "Gemini_Generated_Image_6vva76vva76vva76.png",
+    "Path": "C:\\Users\\USER\\codes\\workingWithCLI\\SharedStorage\\uploads\\Gemini_Generated_Image_6vva76vva76vva76.png",
+    "Type": "image",
+    "Visibility": "private",
+    "Size": 1251047,
+    "UploadTime": "2025-08-30T13:26:02.4601671+01:00",
+    "ParentId": null
+  },
+  {
+    "Id": "9d5319b7bf",
+    "UserId": "21fd9ea3-b",
+    "Name": "Milestone 4 - RESTful API.pdf",
+    "Path": "C:\\Users\\USER\\codes\\workingWithCLI\\SharedStorage\\uploads\\Milestone 4 - RESTful API.pdf",
+    "Type": "file",
+    "Visibility": "private",
+    "Size": 141750,
+    "UploadTime": "2025-08-30T22:57:30.4851299+01:00",
+    "ParentId": null
   }
 ]
